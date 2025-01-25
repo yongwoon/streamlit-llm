@@ -9,6 +9,33 @@ readme = "README.md"
 python = "^3.11"
 streamlit = "^1.41.1"
 
+# langchain
+langchain = "^0.3.15"
+langchain-core = "^0.3.31"
+langchain-experimental = "^0.3.4"
+langchain-community = "^0.3.15"
+langchain-openai = "^0.3.2"
+langchain-anthropic = "^0.3.4"
+
+# lanchain DB
+langchain-elasticsearch = "^0.3.2"
+langchain-chroma = "^0.2.0"
+langchain-milvus = "^0.1.8"
+
+# data processing
+pandas = "^2.1.1"
+numpy = "^1.26.4"
+
+# machine learning
+scikit-learn = "^1.6.1"
+
+# DB
+pinecone = "^5.4.2"
+
+# utils
+pydantic = "^2.5.2"
+tiktoken = "^0.8.0"
+
 
 [build-system]
 requires = ["poetry-core"]
