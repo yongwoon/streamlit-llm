@@ -1,0 +1,5 @@
+.streamlit/*
+!.streamlit/config.toml.sample
+!.streamlit/secrets.toml.sample
+
+env
