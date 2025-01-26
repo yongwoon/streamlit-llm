@@ -10,6 +10,10 @@ st.set_page_config(
     page_icon="🤖",
 )
 
+with st.sidebar:
+    pass
+
+
 st.markdown(
 """
 # Hello!
