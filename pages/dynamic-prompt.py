@@ -19,13 +19,15 @@ if "messages" not in st.session_state:
 with st.sidebar:
     clear_btn = st.button("Reset Chat")
 
-    loader = PromptLoader(base_folder="prompts/dynamic-prompts", languages=['kr'])
+    loader = PromptLoader(base_folder="prompts/dynamic-prompts", languages=['kr', 'en'])
     display_names = loader.get_prompt_files()
     selected_display_name = st.selectbox(
         "Please select prompt type",
         display_names,
         index=0,
     )
+
+    task_input = st.text_input("Input Task", value="")
     selected_prompt = loader.get_file_path(selected_display_name)
 
 # ========= Methods =========
@@ -38,11 +40,16 @@ def add_message(role: str, message: str):
 
 def create_chain(prompt_file_path: str):
     prompt = load_prompt(prompt_file_path)
-
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(model="gpt-4", temperature=0)
     chain = prompt | llm | StrOutputParser()
 
     return chain
+
+def build_input_variables():
+    if task_input:
+        return { "question": user_input, "task": task_input}
+    else:
+        return { "question": user_input }
 
 # ========= Clear chat history =========
 if clear_btn:
@@ -57,7 +64,7 @@ if user_input:
     st.chat_message("user").write(user_input)
 
     chain = create_chain(selected_prompt)
-    response = chain.stream({"question": user_input})
+    response = chain.stream(build_input_variables())
     with st.chat_message("assistant"):
         container = st.empty()
         ai_answer = ""
