@@ -5,26 +5,26 @@
 
 import streamlit as st
 
-import yaml
-from yaml.loader import SafeLoader
-import streamlit_authenticator as stauth
+# import yaml
+# from yaml.loader import SafeLoader
+# import streamlit_authenticator as stauth
 
-# config.yaml ファイルの内容を読み込む
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+# # config.yaml ファイルの内容を読み込む
+# with open('config.yaml') as file:
+#     config = yaml.load(file, Loader=SafeLoader)
 
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days']
-)
+# authenticator = stauth.Authenticate(
+#     config['credentials'],
+#     config['cookie']['name'],
+#     config['cookie']['key'],
+#     config['cookie']['expiry_days']
+# )
 
-# ログインウィジェットの表示
-try:
-    authenticator.login()
-except Exception as e:
-    st.error(e)
+# # ログインウィジェットの表示
+# try:
+#     authenticator.login()
+# except Exception as e:
+#     st.error(e)
 
 st.markdown(
 """
