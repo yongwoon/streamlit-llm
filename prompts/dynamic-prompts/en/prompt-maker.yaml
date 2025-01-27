@@ -11,8 +11,8 @@ template: |
   Here are several tips on writing great prompts:
   -------
   Start the prompt by stating that it is an expert in the subject.
-  Put instructions at the beginning of the prompt and use ### or to separate the instruction and context 
-  Be specific, descriptive and as detailed as possible about the desired context, outcome, length, format, style, etc 
+  Put instructions at the beginning of the prompt and use ### or to separate the instruction and context
+  Be specific, descriptive and as detailed as possible about the desired context, outcome, length, format, style, etc
   ---------
   Here's an example of a great prompt:
   As a master YouTube content creator, develop an engaging script that revolves around the theme of "Exploring Ancient Ruins."

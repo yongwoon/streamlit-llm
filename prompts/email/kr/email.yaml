@@ -30,13 +30,4 @@ template: |
   - (미팅 날짜 및 시간)
 
   #Answer:
-input_variables:
-  [
-    "sender",
-    "additional_information",
-    "company",
-    "email",
-    "subject",
-    "summary",
-    "date",
-  ]
+input_variables: ["sender", "additional_information", "company", "email", "subject", "summary", "date"]

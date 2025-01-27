@@ -6,5 +6,8 @@ poetry add langchain langchain-core langchain-experimental langchain-community l
 poetry add langchain-elasticsearch langchain-chroma langchain-milvus
 poetry add pandas numpy
 poetry add pydantic tiktoken pinecone scikit-learn
+# For SerpAPI
+poetry add google-search-results
 
+poetry add ipython
 ```

@@ -21,6 +21,10 @@ langchain-anthropic = "^0.3.4"
 langchain-elasticsearch = "^0.3.2"
 langchain-chroma = "^0.2.0"
 langchain-milvus = "^0.1.8"
+langchain-ollama = "^0.2.3"
+
+# Releated LLM Models
+huggingface-hub = "^0.28.1"
 
 # data processing
 pandas = "^2.1.1"
@@ -36,6 +40,20 @@ pinecone = "^5.4.2"
 pydantic = "^2.5.2"
 tiktoken = "^0.8.0"
 streamlit-authenticator = "^0.4.1"
+ipython = "^8.32.0"
+
+# Realted pdf, file processing
+pymupdf = "^1.25.2"
+pypdf = "^5.2.0"
+pdfplumber = "^0.11.5"
+pdfminer = "^20191125"
+pymupdf4llm = "^0.0.17"
+
+# Realted deep learning, machine learning
+faiss-cpu = "^1.9.0.post1"
+langgraph = "^0.2.68"
+langsmith = "^0.3.2"
+google-search-results = "^2.4.2"
 
 
 [build-system]
