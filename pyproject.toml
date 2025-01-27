@@ -35,6 +35,7 @@ pinecone = "^5.4.2"
 # utils
 pydantic = "^2.5.2"
 tiktoken = "^0.8.0"
+streamlit-authenticator = "^0.4.1"
 
 
 [build-system]
