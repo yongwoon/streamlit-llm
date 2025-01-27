@@ -5,9 +5,10 @@ from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain import hub
 from dotenv import load_dotenv
+from utils.prompt_loader import PromptLoader
 
 load_dotenv()
-st.title("My LLM(Large Language Models) App")
+st.title("Dynamic prompt")
 
 # 처음 1 번만 실행하기 위한 코드
 if "messages" not in st.session_state:
@@ -16,12 +17,16 @@ if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
 with st.sidebar:
-    clear_btn = st.button("Init chat")
-    selected_prompt = st.selectbox(
+    clear_btn = st.button("Reset Chat")
+
+    loader = PromptLoader(base_folder="prompts/dynamic-prompts", languages=['kr'])
+    display_names = loader.get_prompt_files()
+    selected_display_name = st.selectbox(
         "Please select prompt type",
-        ("Default", "SNS", "Summary"),
+        display_names,
         index=0,
     )
+    selected_prompt = loader.get_file_path(selected_display_name)
 
 # ========= Methods =========
 def print_messages():
@@ -31,19 +36,8 @@ def print_messages():
 def add_message(role: str, message: str):
     st.session_state["messages"].append(ChatMessage(role=role, content=message))
 
-def create_chain(prompt_type: str):
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "당신은 친절한 AI 어시스턴트 입니다. 사용자의 요청사항에 따라 적절한 답변을 작성해 주세요."),
-        ("user", "#Question: \n{question}"),
-    ])
-
-    if prompt_type == "SNS":
-        # SNS 게시글 작성 prompt
-        prompt = load_prompt("prompts/kr/sns.yaml")
-    elif prompt_type == "Summary":
-        # 요악 prompt
-        # prompt = hub.pull("teddynote/chain-of-density-map-korean")
-        prompt = load_prompt("prompts/kr/summary.yaml")
+def create_chain(prompt_file_path: str):
+    prompt = load_prompt(prompt_file_path)
 
     llm = ChatOpenAI(model="gpt-4o", temperature=0)
     chain = prompt | llm | StrOutputParser()
