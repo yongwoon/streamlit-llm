@@ -37,12 +37,15 @@ pydantic = "^2.5.2"
 tiktoken = "^0.8.0"
 streamlit-authenticator = "^0.4.1"
 
-# pdf, file processing
+# Realted pdf, file processing
 pymupdf = "^1.25.2"
 pypdf = "^5.2.0"
 pdfplumber = "^0.11.5"
 pdfminer = "^20191125"
 pymupdf4llm = "^0.0.17"
+
+# Realted deep learning, machine learning
+faiss-cpu = "^1.9.0.post1"
 
 
 [build-system]
