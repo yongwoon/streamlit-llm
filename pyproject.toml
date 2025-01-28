@@ -46,6 +46,8 @@ pymupdf4llm = "^0.0.17"
 
 # Realted deep learning, machine learning
 faiss-cpu = "^1.9.0.post1"
+langgraph = "^0.2.68"
+langsmith = "^0.3.2"
 
 
 [build-system]
