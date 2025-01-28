@@ -55,9 +55,10 @@ def build_input_variables():
 if clear_btn:
     st.session_state["messages"] = []
 
+# ========= Print history ==============
 print_messages()
 
-# ========= User Input =========
+# ========= User Input =================
 user_input = st.chat_input("Ask something")
 if user_input:
     # Print User Input
