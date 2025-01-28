@@ -76,4 +76,3 @@ if user_input:
     # Add User Input to Session
     add_message("user", user_input)
     add_message("assistant", ai_answer)
-
