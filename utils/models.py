@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, List, Optional, Iterator
+from typing import Any, Dict, List, Optional, Iterator, Type, Union
 
 import os
 import base64
@@ -70,12 +70,44 @@ class Embeddings(Enum):
 
 ##########
 
+# Constants and Enums
+class ModelTypes(Enum):
+    LLM = "llm"
+    EMBEDDING = "embedding"
 
-class MultiModal:
-    def __init__(self, model, system_prompt=None, user_prompt=None):
+# Utility Functions
+def encode_image_with_mime(image_content: bytes, mime_type: str) -> str:
+    """Encode image content with mime type"""
+    return f"data:{mime_type};base64,{base64.b64encode(image_content).decode('utf-8')}"
+
+def get_mime_type(file_path: str) -> str:
+    """Get mime type from file extension"""
+    ext = os.path.splitext(file_path)[1].lower()
+    mime_types = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png"
+    }
+    return mime_types.get(ext, "image/unknown")
+
+# Base Classes
+class BaseAssistant:
+    """Base class for all assistant implementations"""
+    def __init__(self, configs: Dict[str, Any]):
+        self.configs = configs
+        self.messages: List[Dict[str, Any]] = []
+
+    def clear_chat_history(self) -> None:
+        """Clear chat history"""
+        self.messages = []
+
+# Model Classes
+class MultiModal(BaseAssistant):
+    def __init__(self, model, system_prompt: Optional[str] = None, user_prompt: Optional[str] = None):
+        super().__init__({})
         self.model = model
-        self.system_prompt = system_prompt
-        self.user_prompt = user_prompt
+        self.system_prompt = system_prompt or "You are a helpful assistant on parsing images."
+        self.user_prompt = user_prompt or "Explain the given images in-depth."
         self.init_prompt()
 
     def init_prompt(self):
@@ -84,35 +116,16 @@ class MultiModal:
         if self.user_prompt is None:
             self.user_prompt = "Explain the given images in-depth."
 
-    # 이미지를 base64로 인코딩하는 함수 (URL)
-    def encode_image_from_url(self, url):
+    def encode_image_from_url(self, url: str) -> str:
         response = requests.get(url)
-        if response.status_code == 200:
-            image_content = response.content
-            if url.lower().endswith((".jpg", ".jpeg")):
-                mime_type = "image/jpeg"
-            elif url.lower().endswith(".png"):
-                mime_type = "image/png"
-            else:
-                mime_type = "image/unknown"
-            return f"data:{mime_type};base64,{base64.b64encode(image_content).decode('utf-8')}"
-        else:
+        if response.status_code != 200:
             raise Exception("Failed to download image")
+        return encode_image_with_mime(response.content, get_mime_type(url))
 
-    # 이미지를 base64로 인코딩하는 함수 (파일)
-    def encode_image_from_file(self, file_path):
+    def encode_image_from_file(self, file_path: str) -> str:
         with open(file_path, "rb") as image_file:
-            image_content = image_file.read()
-            file_ext = os.path.splitext(file_path)[1].lower()
-            if file_ext in [".jpg", ".jpeg"]:
-                mime_type = "image/jpeg"
-            elif file_ext == ".png":
-                mime_type = "image/png"
-            else:
-                mime_type = "image/unknown"
-            return f"data:{mime_type};base64,{base64.b64encode(image_content).decode('utf-8')}"
+            return encode_image_with_mime(image_file.read(), get_mime_type(file_path))
 
-    # 이미지 경로에 따라 적절한 함수를 호출하는 함수
     def encode_image(self, image_path):
         if image_path.startswith("http://") or image_path.startswith("https://"):
             return self.encode_image_from_url(image_path)
@@ -200,13 +213,13 @@ class OpenAIStreamHandler(AssistantEventHandler):
         return delta.value
 
 
-class OpenAIAssistant:
+class OpenAIAssistant(BaseAssistant):
     """
     OpenAI 어시스턴트를 관리하는 클래스입니다.
     이 클래스는 OpenAI API를 사용하여 파일 업로드, 어시스턴트 생성, 대화 관리 등의 기능을 제공합니다.
     """
 
-    def __init__(self, configs):
+    def __init__(self, configs: Dict[str, Any]):
         """
         OpenAIAssistant 클래스의 생성자입니다.
 
@@ -220,14 +233,13 @@ class OpenAIAssistant:
             "chunk_overlap": 100, # 청크 중복 크기
         }
         """
+        super().__init__(configs)
         self.client = OpenAI(api_key=configs["OPENAI_API_KEY"])
         self.model = configs.get("model_name", "gpt-4o")
         self.instructions = configs.get("instructions", "")
         self.project_name = configs.get("PROJECT_NAME", "PDF-RAG-TEST")
         self.chunk_size = configs.get("chunk_size", 800)
         self.chunk_overlap = configs.get("chunk_overlap", 400)
-
-        self.messages = []
         self.thread_id = None
 
     def upload_file(self, filepath):
@@ -422,19 +434,13 @@ class OpenAIAssistant:
         self.thread_id = None
 
 
-class AnthropicPDFAssistant:
+class AnthropicPDFAssistant(BaseAssistant):
     """
     Anthropic 어시스턴트를 관리하는 클래스입니다.
     이 클래스는 Anthropic API를 사용하여 PDF 파일 처리, 메시지 생성 등의 기능을 제공합니다.
     """
 
-    def __init__(
-        self,
-        configs,
-        pdf_path,
-        use_prompt_cache=False,
-        system_prompt: str = None,
-    ):
+    def __init__(self, configs: Dict[str, Any], pdf_path: str, use_prompt_cache: bool = False, system_prompt: Optional[str] = None):
         """
         AnthropicAssistant 클래스의 생성자입니다.
 
@@ -448,16 +454,16 @@ class AnthropicPDFAssistant:
         :param pdf_path: PDF 파일의 URL 또는 로컬 파일 경로
         :param use_prompt_cache: 프롬프트 캐싱 사용 여부 (기본값: False)
         """
-        self.client = anthropic.Anthropic(
-            api_key=configs.get("ANTHROPIC_API_KEY", None)
-        )
+        super().__init__(configs)
+        self.client = anthropic.Anthropic(api_key=configs.get("ANTHROPIC_API_KEY"))
         self.model = configs.get("model", "claude-3-5-sonnet-20241022")
         self.max_tokens = configs.get("max_tokens", 4096)
         self.betas = configs.get("betas", ["pdfs-2024-09-25"])
         self.use_prompt_cache = use_prompt_cache
         self.pdf_data = self._encode_pdf(pdf_path)
-        self.messages = []
-        # RAG 시스템 프롬프트 입력
+        self._setup_system_prompt(system_prompt)
+
+    def _setup_system_prompt(self, system_prompt: Optional[str]) -> None:
         _DEFAULT_RAG_INSTRUCTIONS = """You are an assistant for question-answering tasks.
         Use the following pieces of retrieved context to answer the question.
         If you don't know the answer, just say that you don't know.
@@ -649,7 +655,7 @@ class AnthropicPDFAssistant:
         return "\n".join(result)
 
 
-def enum_to_dataframe(enum_class, model_type=None):
+def enum_to_dataframe(enum_class: Type[Enum], model_type: Optional[str] = None) -> pd.DataFrame:
     """
     Convert an Enum class to a DataFrame with an optional model type column
 
@@ -675,7 +681,7 @@ def enum_to_dataframe(enum_class, model_type=None):
     return df
 
 
-def list_models(model_type=None):
+def list_models(model_type: Optional[str] = None) -> pd.DataFrame:
     """
     모든 사용 가능한 모델들을 DataFrame으로 반환합니다.
 
@@ -703,7 +709,7 @@ def list_models(model_type=None):
     return all_models
 
 
-def get_model_name(model: LLMs | Embeddings) -> str:
+def get_model_name(model: Union[LLMs, Embeddings]) -> Optional[str]:
     """
     Enum 클래스로부터 모델의 최종 value 값을 추출하여 반환합니다.
 
