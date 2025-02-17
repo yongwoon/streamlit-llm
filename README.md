@@ -56,3 +56,5 @@ streamlit run main.py
 - `pages/local-RAG.py`
   - `pdf-based-qa` 와 동일한 기능을 가지고 있음
 - `pages/multi-modal.py`
+- `pages/multi-tern.py`
+-
