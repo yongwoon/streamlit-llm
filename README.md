@@ -58,3 +58,8 @@ streamlit run main.py
 - `pages/multi-modal.py`
 - `pages/multi-tern.py`
 -
+
+## Others
+
+- [unstructured](https://unstructured.io)
+  - unstructured 라이브러리는 비정형 데이터(PDF, 이미지, HTML 등)를 구조화된 형식으로 변환하는 라이브러리입니다.
